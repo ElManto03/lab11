@@ -38,7 +38,7 @@ public interface MusicGroup {
      */
     Stream<String> albumNames();
 
-    /**
+    /** 
      * @param year
      *            the year
      * @return all the albums in the given year
