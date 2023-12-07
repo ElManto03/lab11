@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -64,17 +65,30 @@ public final class MusicGroupImpl implements MusicGroup {
 
     @Override
     public OptionalDouble averageDurationOfSongs(final String albumName) {
-        return OptionalDouble.of(this.songs.stream().map(s -> (s.getDuration())).reduce((d1,d2) -> (d1.getAsDouble()+d2.getAsDouble())/2));
+        return this.songs.stream()
+        .filter(s -> s.getAlbumName()
+        .equals(Optional.of(albumName)))
+        .mapToDouble(s -> (s.getDuration()))
+        .average();
     }
 
     @Override
     public Optional<String> longestSong() {
-        return null;
+        return songs.stream()
+        .max((s1,s2) -> Double.compare(s1.getDuration(), s2.getDuration()))
+        .map(s -> s.getSongName());
     }
 
     @Override
     public Optional<String> longestAlbum() {
-        return null;
+       return songs.stream().collect(Collectors
+       .toMap(Song::getAlbumName, Song::getDuration, Double::sum))
+       .entrySet().stream()
+       .filter(s -> s.getKey().isPresent())
+       .max(Map.Entry.comparingByValue())
+       .flatMap(s -> s.getKey());
+
+        //return songs.stream().collect(Collectors.groupingBy(Song::getAlbumName),Collectors.mapping(Song::getDuration,Collectors.toSet()));
     }
 
     private static final class Song {
@@ -88,6 +102,7 @@ public final class MusicGroupImpl implements MusicGroup {
             super();
             this.songName = name;
             this.albumName = album;
+
             this.duration = len;
         }
 
@@ -112,7 +127,8 @@ public final class MusicGroupImpl implements MusicGroup {
         }
 
         @Override
-        public boolean equals(final Object obj) {
+ 
+      public boolean equals(final Object obj) {
             if (obj instanceof Song) {
                 final Song other = (Song) obj;
                 return albumName.equals(other.albumName) && songName.equals(other.songName)
