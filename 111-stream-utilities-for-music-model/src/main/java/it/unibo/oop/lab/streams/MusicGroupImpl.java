@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Set;
-import java.util.stream.Stream;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -58,37 +58,36 @@ public final class MusicGroupImpl implements MusicGroup {
     @Override
     public int countSongsInNoAlbum() {
         return (int) this.songs.stream()
-                .filter(s -> s.getAlbumName()
-                .isEmpty())
-                .count();
+            .filter(s -> s.getAlbumName()
+            .isEmpty())
+            .count();
     }
 
     @Override
     public OptionalDouble averageDurationOfSongs(final String albumName) {
         return this.songs.stream()
-        .filter(s -> s.getAlbumName()
-        .equals(Optional.of(albumName)))
-        .mapToDouble(s -> (s.getDuration()))
-        .average();
+            .filter(s -> s.getAlbumName()
+            .equals(Optional.of(albumName)))
+            .mapToDouble(s -> s.getDuration())
+            .average();
     }
 
     @Override
     public Optional<String> longestSong() {
         return songs.stream()
-        .max((s1,s2) -> Double.compare(s1.getDuration(), s2.getDuration()))
-        .map(s -> s.getSongName());
+            .max((s1, s2) ->
+            Double.compare(s1.getDuration(), s2.getDuration()))
+            .map(s -> s.getSongName());
     }
 
     @Override
     public Optional<String> longestAlbum() {
        return songs.stream().collect(Collectors
-       .toMap(Song::getAlbumName, Song::getDuration, Double::sum))
-       .entrySet().stream()
-       .filter(s -> s.getKey().isPresent())
-       .max(Map.Entry.comparingByValue())
-       .flatMap(s -> s.getKey());
-
-        //return songs.stream().collect(Collectors.groupingBy(Song::getAlbumName),Collectors.mapping(Song::getDuration,Collectors.toSet()));
+            .toMap(Song::getAlbumName, Song::getDuration, Double::sum))
+            .entrySet().stream()
+            .filter(s -> s.getKey().isPresent())
+            .max(Map.Entry.comparingByValue())
+            .flatMap(s -> s.getKey());
     }
 
     private static final class Song {

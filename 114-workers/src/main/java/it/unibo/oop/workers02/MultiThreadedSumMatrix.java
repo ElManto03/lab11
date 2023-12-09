@@ -27,7 +27,7 @@ public class MultiThreadedSumMatrix implements SumMatrix {
         @Override
         public void run() {
             log();
-            for (int i = startArray; i < matrix.length && i < startArray + narrays - 1; i++) {
+            for (int i = startArray; i < matrix.length && i < startArray + narrays; i++) {
                 for (final double n : this.matrix[i]) {
                     this.res += n;
                 }
