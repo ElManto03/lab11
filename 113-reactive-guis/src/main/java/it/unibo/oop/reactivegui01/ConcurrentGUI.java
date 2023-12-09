@@ -87,11 +87,11 @@ public final class ConcurrentGUI extends JFrame {
             }
         }
 
-        /**
-         * External command to stop counting.
-         */
-        public void stopCounting() {
-            this.stop = true;
-        }
+            /**
+             * External command to stop counting.
+             */
+            public void stopCounting() {
+                this.stop = true;
+            }
     }
 }
