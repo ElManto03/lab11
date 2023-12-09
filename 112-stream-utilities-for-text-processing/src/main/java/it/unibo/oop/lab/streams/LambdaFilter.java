@@ -48,14 +48,17 @@ public final class LambdaFilter extends JFrame {
         COUNT_LINES("Lines counter", s -> String.valueOf(s.lines().count())),
         ALPHABETIC_ORDER("Sort word in alphabetical order", s -> {
             final var list = Arrays.stream(s.split("[ \n]"));
-            return list.sorted().reduce((w1, w2) -> (w1 + "\n" + w2)).orElse("");
+            return list.sorted()
+                .reduce((w1, w2) -> w1 + "\n" + w2)
+                .orElse("");
         }),
         WORD_COUNT("Count equal words", s -> {
             final var list = Arrays.stream(s.split("[ \n]"));
             return list.collect(toMap(w -> w, c -> 1, Integer::sum))
-                    .entrySet().stream()
-                    .map(e -> e.getKey() + " -> " + e.getValue())
-                    .reduce((w1, w2) -> w1 + "\n" + w2).orElse("");
+                .entrySet().stream()
+                .map(e -> e.getKey() + " -> " + e.getValue())
+                .reduce((w1, w2) -> w1 + "\n" + w2)
+                .orElse("");
         });
 
         private final String commandName;
