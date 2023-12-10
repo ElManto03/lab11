@@ -22,6 +22,7 @@ public final class AnotherConcurrentGUI extends JFrame {
     private static final double WIDTH_PERC = 0.2;
     private static final double HEIGHT_PERC = 0.1;
     private static final long WAITING_TIME = TimeUnit.SECONDS.toMillis(10);
+    
     private final JLabel display = new JLabel();
     private final JButton stop = new JButton("stop");
     private final JButton up = new JButton("up");

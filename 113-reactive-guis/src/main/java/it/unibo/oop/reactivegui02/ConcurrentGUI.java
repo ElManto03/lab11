@@ -19,6 +19,7 @@ public final class ConcurrentGUI extends JFrame {
     private static final long serialVersionUID = 2L;
     private static final double WIDTH_PERC = 0.2;
     private static final double HEIGHT_PERC = 0.1;
+    
     private final JLabel display = new JLabel();
     private final JButton stop = new JButton("stop");
     private final JButton up = new JButton("up");
