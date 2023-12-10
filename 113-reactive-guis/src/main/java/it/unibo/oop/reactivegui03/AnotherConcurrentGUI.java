@@ -2,8 +2,7 @@ package it.unibo.oop.reactivegui03;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.TimeUnit;
 
@@ -19,18 +18,25 @@ import javax.swing.SwingUtilities;
 @SuppressWarnings("PMD.AvoidPrintStackTrace")
 public final class AnotherConcurrentGUI extends JFrame {
 
+    private static final long serialVersionUID = 3L;
     private static final double WIDTH_PERC = 0.2;
     private static final double HEIGHT_PERC = 0.1;
+    private static final long WAITING_TIME = TimeUnit.SECONDS.toMillis(10);
     private final JLabel display = new JLabel();
     private final JButton stop = new JButton("stop");
     private final JButton up = new JButton("up");
     private final JButton down = new JButton("down");
-    private Counter counter = new Counter();
+    private final CounterAgent counter = new CounterAgent();
 
+     /**
+     * Builds a new CGUI.
+     */
+    @SuppressWarnings("CPD-START")
     public AnotherConcurrentGUI() {
         super();
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setSize((int) (screenSize.getWidth() * WIDTH_PERC), (int) (screenSize.getHeight() * HEIGHT_PERC));
+        this.setSize((int) (screenSize.getWidth() * WIDTH_PERC),
+            (int) (screenSize.getHeight() * HEIGHT_PERC));
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         final JPanel panel = new JPanel();
         panel.add(display);
@@ -39,10 +45,13 @@ public final class AnotherConcurrentGUI extends JFrame {
         panel.add(stop);
         this.getContentPane().add(panel);
         this.setVisible(true);
+        /*
+         * Launch threads
+         */
         new Thread(counter).start();
         new Thread(new Stopper()).start();
         /*
-         *  Listeners
+         * Listeners
          */
         up.addActionListener(e -> counter.goUp());
         down.addActionListener(e -> counter.goDown());
@@ -50,11 +59,12 @@ public final class AnotherConcurrentGUI extends JFrame {
             counter.stopCounting();
             disableButtons();
         });
-
     }
+    @SuppressWarnings("CPD-END")
 
-    private class Counter implements Runnable {
+    private final class CounterAgent implements Runnable, Serializable {
 
+        private static final long serialVersionUID = 31L;
         private volatile boolean stop;
         private volatile boolean isDecreasing;
         private int counter;
@@ -63,9 +73,9 @@ public final class AnotherConcurrentGUI extends JFrame {
         public void run() {
             while (!this.stop) {
                 try {
-                    // The EDT doesn't access `counter` anymore, it doesn't need to be volatile
                     final var nextText = Integer.toString(this.counter);
-                    SwingUtilities.invokeAndWait(() -> AnotherConcurrentGUI.this.display.setText(nextText));
+                    SwingUtilities.invokeAndWait(() -> 
+                        AnotherConcurrentGUI.this.display.setText(nextText));
                     this.counter += isDecreasing() ? -1 : 1;
                     Thread.sleep(100);
                 } catch (InvocationTargetException | InterruptedException ex) {
@@ -74,12 +84,8 @@ public final class AnotherConcurrentGUI extends JFrame {
             }
         }
 
-        /**
-         * External command to stop counting.
-         */
         public void stopCounting() {
             this.stop = true;
-
         }
 
         public boolean isDecreasing() {
@@ -93,7 +99,6 @@ public final class AnotherConcurrentGUI extends JFrame {
         public void goDown() {
             this.isDecreasing = true;
         }
-
     }
 
     private void disableButtons() {
@@ -102,20 +107,17 @@ public final class AnotherConcurrentGUI extends JFrame {
         stop.setEnabled(false);
     }
 
-    private class Stopper implements Runnable {
+    private final class Stopper implements Runnable {
 
         @Override
         public void run() {
             try {
-                Thread.sleep(TimeUnit.SECONDS.toMillis(10));
+                Thread.sleep(WAITING_TIME);
                 AnotherConcurrentGUI.this.counter.stopCounting();
                 AnotherConcurrentGUI.this.disableButtons();
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
+            } catch (final InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        
-    } 
-
+    }
 }
