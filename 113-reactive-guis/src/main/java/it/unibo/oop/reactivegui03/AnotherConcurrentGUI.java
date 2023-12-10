@@ -22,14 +22,14 @@ public final class AnotherConcurrentGUI extends JFrame {
     private static final double WIDTH_PERC = 0.2;
     private static final double HEIGHT_PERC = 0.1;
     private static final long WAITING_TIME = TimeUnit.SECONDS.toMillis(10);
-    
+
     private final JLabel display = new JLabel();
     private final JButton stop = new JButton("stop");
     private final JButton up = new JButton("up");
     private final JButton down = new JButton("down");
     private final CounterAgent counter = new CounterAgent();
 
-     /**
+    /**
      * Builds a new CGUI.
      */
     @SuppressWarnings("CPD-START")
@@ -61,6 +61,7 @@ public final class AnotherConcurrentGUI extends JFrame {
             disableButtons();
         });
     }
+
     @SuppressWarnings("CPD-END")
 
     private final class CounterAgent implements Runnable, Serializable {
@@ -75,8 +76,7 @@ public final class AnotherConcurrentGUI extends JFrame {
             while (!this.stop) {
                 try {
                     final var nextText = Integer.toString(this.counter);
-                    SwingUtilities.invokeAndWait(() -> 
-                        AnotherConcurrentGUI.this.display.setText(nextText));
+                    SwingUtilities.invokeAndWait(() -> AnotherConcurrentGUI.this.display.setText(nextText));
                     this.counter += isDecreasing() ? -1 : 1;
                     Thread.sleep(100);
                 } catch (InvocationTargetException | InterruptedException ex) {
