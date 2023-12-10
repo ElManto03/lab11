@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,7 +45,7 @@ public final class MusicGroupImpl implements MusicGroup {
     public Stream<String> albumInYear(final int year) {
         return albums.entrySet().stream()
             .filter(alb -> alb.getValue().equals(year))
-            .map(alb -> alb.getKey());
+            .map(Entry::getKey);
     }
 
     @Override
@@ -68,7 +69,7 @@ public final class MusicGroupImpl implements MusicGroup {
         return this.songs.stream()
             .filter(s -> s.getAlbumName()
             .equals(Optional.of(albumName)))
-            .mapToDouble(s -> s.getDuration())
+            .mapToDouble(Song::getDuration)
             .average();
     }
 
@@ -77,17 +78,17 @@ public final class MusicGroupImpl implements MusicGroup {
         return songs.stream()
             .max((s1, s2) ->
             Double.compare(s1.getDuration(), s2.getDuration()))
-            .map(s -> s.getSongName());
+            .map(Song::getSongName);
     }
 
     @Override
     public Optional<String> longestAlbum() {
-       return songs.stream().collect(Collectors
-            .toMap(Song::getAlbumName, Song::getDuration, Double::sum))
+       return songs.stream().collect(
+            Collectors.toMap(Song::getAlbumName, Song::getDuration, Double::sum))
             .entrySet().stream()
             .filter(s -> s.getKey().isPresent())
             .max(Map.Entry.comparingByValue())
-            .flatMap(s -> s.getKey());
+            .flatMap(Entry::getKey);
     }
 
     private static final class Song {
