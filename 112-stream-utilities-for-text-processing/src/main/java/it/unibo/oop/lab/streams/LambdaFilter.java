@@ -46,20 +46,20 @@ public final class LambdaFilter extends JFrame {
         LOWERCASE("To lowercase", String::toLowerCase),
         COUNT_CHARS("Char counter", s -> String.valueOf(s.length())),
         COUNT_LINES("Lines counter", s -> String.valueOf(s.lines().count())),
-        ALPHABETIC_ORDER("Sort word in alphabetical order", s -> {
-            return Arrays.stream(s.split("[ \n]"))
+        ALPHABETIC_ORDER("Sort word in alphabetical order", s -> 
+                Arrays.stream(s.split("[ \n]"))
                 .sorted()
                 .reduce((w1, w2) -> w1 + "\n" + w2)
-                .orElse("");
-        }),
-        WORD_COUNT("Count equal words", s -> {
-            return Arrays.stream(s.split("[ \n]"))
+                .orElse("")
+        ),
+        WORD_COUNT("Count equal words", s -> 
+                Arrays.stream(s.split("[ \n]"))
                 .collect(toMap(w -> w, c -> 1, Integer::sum))
                 .entrySet().stream()
                 .map(e -> e.getKey() + " -> " + e.getValue())
                 .reduce((w1, w2) -> w1 + "\n" + w2)
-                .orElse("");
-        });
+                .orElse("")
+        );
 
         private final String commandName;
         private final Function<String, String> fun;
